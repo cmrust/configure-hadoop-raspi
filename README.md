@@ -79,7 +79,7 @@ Let's setup passwordless ssh from your computer to all 3 nodes. We'll need to co
 Hadoop prerequisites & base install
 -----------------------------------
 
-For many of the steps below we can run a bash loop to hit all 3 boxes at once. Something simple, like the following.
+For the rest of this section we can run a bash loop to hit all 3 boxes at once. Something simple, like the following.
 
 	echo "hc0000
 	hc0001
@@ -93,8 +93,6 @@ For many of the steps below we can run a bash loop to hit all 3 boxes at once. S
 This will run the command `uptime` on all 3 nodes.
 
 For the sake of clarity, I'll refrain from pasting the loop at each step but instead just the single commands.
-
-Run all of these next steps on all of the nodes.
 
 Update the system
 
@@ -132,3 +130,135 @@ Download Hadoop
 `wget http://apache.mirrors.tds.net/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz`
 	
 Install Hadoop to /usr/local
+
+	sudo tar vxzf hadoop-1.2.1.tar.gz -C /usr/local/
+	cd /usr/local
+	sudo mv hadoop-1.2.1/ hadoop
+	sudo chown -R hduser:hadoop /usr/local/hadoop
+	
+Configure User Environment
+
+	cd ~
+	rm hadoop-1.2.1.tar.gz
+
+You can use any editor you like, I'll denote these entries with vim.
+
+`vim .bash_profile`
+
+Add the following to each node's `~/.bash_profile`
+
+	# Setup Environment Variables
+	export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-armhf
+	export HADOOP_INSTALL=/usr/local/hadoop
+	export PATH=$PATH:$HADOOP_INSTALL/bin
+
+Setup the `hadoop-env.sh`	
+
+`vim /usr/local/hadoop/conf/hadoop-env.sh`
+	
+The options to adjust here are:
+
+	export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-armhf
+	export HADOOP_HEAPSIZE=384	
+
+Some other similar guides had set `HADOOP_HEAPSIZE` to 272. I raised it up a bit because there was 433 MB free upon issuing a `free -m` after cold boot.
+
+Setup the master node
+---------------------
+
+Setup the tmp dir and filesystem URI
+
+`vim /usr/local/hadoop/conf/core-site.xml`
+
+Add the following to the <configuration> section:
+
+	<property>
+	  <name>hadoop.tmp.dir</name>
+	  <value>/fs/hadoop/tmp</value>
+	  <description>Sets the operating directory for Hadoop data.
+	  </description>
+	</property>
+	<property>
+	  <name>fs.default.name</name>
+	  <value>hdfs://localhost:54310</value>
+	  <description>The name of the default file system.  A URI whose
+	  scheme and authority determine the FileSystem implementation.
+	  The URI's scheme determines the config property (fs.SCHEME.impl) naming
+	  the FileSystem implementation class.  The URI's authority is used to
+	  determine the host, port, etc. for a filesystem.  
+	  </description>
+	</property>
+
+Set up the job tracker URI
+
+`vim /usr/local/hadoop/conf/mapred-site.xml`
+
+Add the following to the <configuration> section:
+
+	<property>
+	  <name>mapred.job.tracker</name>
+	  <value>localhost:54311</value>
+	  <description>The host and port that the MapReduce job tracker runs
+	  at.  If "local", then jobs are run in-process as a single map
+	  and reduce task.
+	  </description>
+	</property>
+
+Set the replication factor to 1 for now, since we only have 1 node.
+
+`vim /usr/local/hadoop/conf/hdfs-site.xml`
+
+Add the following to the <configuration> section:
+
+	<property>
+	  <name>dfs.replication</name>
+	  <value>1</value>
+	  <description>Default block replication.
+	  The actual number of replications can be specified when the file is created.
+	  The default is used if replication is not specified in create time.
+	  </description>
+	</property>
+
+Configure the hdfs on real disk
+
+	sudo mkdir -p /fs/hadoop/tmp
+	sudo chown hduser:hadoop /fs/hadoop/tmp
+	sudo chmod 750 /fs/hadoop/tmp/
+
+Format the HDFS
+
+	/usr/local/hadoop/bin/hadoop namenode -format
+
+Start it up!
+
+	/usr/local/hadoop/bin/start-all.sh
+
+You can run 'jps' command to ensure all the appropriate Java Hadoop processes are running:
+
+	DataNode
+	TaskTracker
+	SecondaryNameNode
+	NameNode
+	JobTracker
+
+If you've encountered failures look at the logs:
+
+`/usr/local/hadoop/logs`
+
+Logs are titled like:
+
+`hadoop-(username)-(processtype)-(machinename).log`
+
+Now that everything is up and running we'll run our first job, a word count example!
+
+Download any book in "Plain Text UTF-8" format from www.gutenburg.org and load it into HDFS:
+
+	mkdir -p /tmp/books
+	cd /tmp/books
+	wget http://www.gutenberg.org/files/43790/43790-0.txt
+	mv 43790-0.txt bookofcats.txt
+	/usr/local/hadoop/bin/hadoop dfs -copyFromLocal /tmp/books /fs/hduser/books
+
+Run the wordcount example:
+
+`/usr/local/hadoop/bin/hadoop jar /usr/local/hadoop/hadoop*examples*.jar wordcount /fs/hduser/books /fs/hduser/books-output`
