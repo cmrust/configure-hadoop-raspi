@@ -428,5 +428,5 @@ Sources
 A great resource for understanding Hadoop setups:
 http://bradhedlund.com/2011/09/10/understanding-hadoop-clusters-and-the-network/
 
-This tutorial is mostly based on the following blog post:
+This tutorial is mostly based on the efforts of the following blog post:
 http://blog.ittoby.com/2013/08/starting-small-set-up-hadoop-compute.html
