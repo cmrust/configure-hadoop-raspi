@@ -297,7 +297,7 @@ Gather up all keys with a loop
 
 Take these public keys and add them to the authorized_keys file of each node with a loop
 	
-	echo "" >> ~/.ssh/authorized_keys
+	echo "${public_keys}" >> ~/.ssh/authorized_keys
 
 
 On the master, hc0000
