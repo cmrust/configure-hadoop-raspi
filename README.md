@@ -107,12 +107,12 @@ Setup 'hduser' User and 'hadoop' Group
 `sudo addgroup hadoop`
 `sudo adduser --ingroup hadoop hduser`	
 
-Adding the user failed when trying over ssh because you can't set the password without an interactive tty.
+Adding the user may fail when trying to do so over ssh. This is because you can't set the password without an interactive shell.
 
-`sudo adduser hduser sudo`					
+Here we'll give `hduser` sudo access. This step must be done as `root` user or someone with sudo access.
 
-This step had to be done as 'pi' or 'root' user, with sudo access.
-	
+`sudo adduser hduser sudo`
+
 *WARNING: Everything from this point forward has to be run as user 'hduser'*
 
 Setup SSH so the nodes can talk to themselves and eachother.
