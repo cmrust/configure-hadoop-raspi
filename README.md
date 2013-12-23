@@ -13,7 +13,7 @@ Technically you could draw more computing power out of the setup with a few of t
 Before we start
 ---------------
 
-The following items are not all necessary. Obviously, you could have any combination of equipment. Technically you could run all of the hadoop tools on a single node if you wanted. By choosing these items we're just laying out the most common path we assume people will take. If anything below is specific to these items, we'll point it out.
+The following items are not all necessary. Obviously, you could have any combination of equipment. Technically you could run all of the hadoop tools on a single node if you wanted. By choosing these items we're just laying out the most common path we assume people will want to take. If anything below is specific to these items, we'll point it out.
 
 Requirements:
 
