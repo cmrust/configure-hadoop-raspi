@@ -307,16 +307,16 @@ These two files, masters and slaves, control the way the cluster stops and start
 
 `vim /usr/local/hadoop/conf/masters`
 
-	remove:
+	Change:
 		localhost
-	add:
+	To:
 		hc0000
 
 `vim /usr/local/hadoop/conf/slaves`
 
-	remove:
+	Change:
 		localhost
-	add:
+	To:
 		hc0000
 		hc0001
 		hc0002
