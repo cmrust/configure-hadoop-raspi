@@ -399,8 +399,8 @@ Start it up
 
 	/usr/local/hadoop/bin/start-all.sh
 
-On all nodes
-------------
+Congratulations!
+----------------
 
 You can run 'jps' again to make sure all the right processes are up and running.
 
