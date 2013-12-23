@@ -104,8 +104,8 @@ Install Java
 	
 Setup 'hduser' User and 'hadoop' Group
 
-`sudo addgroup hadoop`
-`sudo adduser --ingroup hadoop hduser`	
+	sudo addgroup hadoop
+	sudo adduser --ingroup hadoop hduser
 
 Adding the user may fail when trying to do so over ssh. This is because you can't set the password without an interactive shell.
 
@@ -117,8 +117,8 @@ Here we'll give `hduser` sudo access. This step must be done as `root` user or s
 
 Setup SSH so the nodes can talk to themselves and eachother
 
-`ssh-keygen -t rsa -P ""`
-`cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys`
+	ssh-keygen -t rsa -P ""
+	cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
 Test that it's working
 
@@ -126,8 +126,8 @@ Test that it's working
 	
 Download Hadoop
 
-`cd ~`
-`wget http://apache.mirrors.tds.net/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz`
+	cd ~
+	wget http://apache.mirrors.tds.net/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz
 	
 Install Hadoop to /usr/local
 
