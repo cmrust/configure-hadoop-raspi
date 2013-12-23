@@ -115,7 +115,7 @@ Here we'll give `hduser` sudo access. This step must be done as `root` user or s
 
 *WARNING: Everything from this point forward has to be run as user 'hduser'*
 
-Setup SSH so the nodes can talk to themselves and eachother.
+Setup SSH so the nodes can talk to themselves and eachother
 
 `ssh-keygen -t rsa -P ""`
 `cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys`
