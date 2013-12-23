@@ -249,6 +249,12 @@ Logs are titled like:
 
 	hadoop-(username)-(processtype)-(machinename).log
 
+If everything is working as expected you should be able to hit the following pages:
+
+- NameNode - 192.168.1.10:50070
+- JobTracker - 192.168.1.10:50030
+- TaskTracker - 192.168.1.10:50060
+
 Now that everything is up and running we'll run our first job, a word count example!
 
 Download any book in "Plain Text UTF-8" format from www.gutenburg.org and load it into HDFS:
