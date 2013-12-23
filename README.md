@@ -107,13 +107,13 @@ Setup 'hduser' User and 'hadoop' Group
 `sudo addgroup hadoop`
 `sudo adduser --ingroup hadoop hduser`	
 
-Adding the user failed when trying over ssh, can't set password without an interactive tty.
+Adding the user failed when trying over ssh because you can't set the password without an interactive tty.
 
 `sudo adduser hduser sudo`					
 
 This step had to be done as 'pi' or 'root' user, with sudo access.
 	
-*Everything from this point forward has to be run as user 'hduser'*
+*WARNING: Everything from this point forward has to be run as user 'hduser'*
 
 Setup SSH so the nodes can talk to themselves and eachother.
 
@@ -141,7 +141,7 @@ Configure User Environment
 	cd ~
 	rm hadoop-1.2.1.tar.gz
 
-You can use any editor you like, I'll denote these entries with vim.
+You can use any editor you like but I'll denote the moments when we're supposed to edit a text file with vim.
 
 `vim .bash_profile`
 
@@ -262,3 +262,162 @@ Download any book in "Plain Text UTF-8" format from www.gutenburg.org and load i
 Run the wordcount example:
 
 `/usr/local/hadoop/bin/hadoop jar /usr/local/hadoop/hadoop*examples*.jar wordcount /fs/hduser/books /fs/hduser/books-output`
+
+Setup the slave nodes
+---------------------
+
+Now, let's work with multiple nodes.
+
+Master node, hc0000, will run:
+
+	NameNode
+	Secondary NameNode
+	DataNode
+	JobTracker (In a large production cluster this would be somewhere else)
+	TaskTracker
+
+In a large production cluster Secondary NameNode and JobTracker would have their own servers.
+
+Slave nodes, hc0001 and hc0002, will run:
+
+	DataNode
+	TaskTracker
+
+Before we begin again, setup passwordless ssh between all nodes:
+
+Gather up all keys with a loop
+
+`cat ~/.ssh/id_rsa.pub`
+
+Take these public keys and add them to the authorized_keys file of each node with a loop
+	
+`echo "" >> ~/.ssh/authorized_keys`
+
+
+On the master, hc0000
+---------------------
+
+These two files, masters and slaves, control the way the cluster stops and starts. You can remove hosts from here and reboot the cluster to kick a node out, or conversely bring one in.
+
+`vim /usr/local/hadoop/conf/masters`
+
+	remove:
+		localhost
+	add:
+		hc0000
+
+`vim /usr/local/hadoop/conf/slaves`
+
+	remove:
+		localhost
+	add:
+		hc0000
+		hc0001
+		hc0002
+
+`vim /usr/local/hadoop/conf/core-site.xml`
+
+	Change:
+		<name>fs.default.name</name>
+		<value>hdfs://localhost:54310</value>
+
+	To reflect the hostname of the server running NameNode:
+		<name>fs.default.name</name>
+		<value>hdfs://hc0000:54310</value>
+
+`vim /usr/local/hadoop/conf/mapred-site.xml`
+
+	Change:
+		<name>mapred.job.tracker</name>
+		<value>localhost:54311</value>
+
+	To:
+		<name>mapred.job.tracker</name>
+		<value>hc0000:54311</value>
+
+`vim /usr/local/hadoop/conf/hdfs-site.xml`
+
+	Change:
+		<name>dfs.replication</name>
+		<value>1</value>
+
+	To:
+		<name>dfs.replication</name>
+		<value>3</value>
+
+Copy core-site.xml, mapred-site.xml and hdfs-site.xml out from the master to the new nodes:
+
+	scp hduser@hc0000:/usr/local/hadoop/conf/core-site.xml hduser@hc0001:/usr/local/hadoop/conf/.
+	scp hduser@hc0000:/usr/local/hadoop/conf/mapred-site.xml hduser@hc0001:/usr/local/hadoop/conf/.
+	scp hduser@hc0000:/usr/local/hadoop/conf/hdfs-site.xml hduser@hc0001:/usr/local/hadoop/conf/.
+
+	scp hduser@hc0000:/usr/local/hadoop/conf/core-site.xml hduser@hc0002:/usr/local/hadoop/conf/.
+	scp hduser@hc0000:/usr/local/hadoop/conf/mapred-site.xml hduser@hc0002:/usr/local/hadoop/conf/.
+	scp hduser@hc0000:/usr/local/hadoop/conf/hdfs-site.xml hduser@hc0002:/usr/local/hadoop/conf/.
+
+On the slaves, hc0001 and hc0002
+--------------------------------
+
+Configure the hdfs on real disk
+
+	sudo mkdir -p /fs/hadoop/tmp
+	sudo chown hduser:hadoop /fs/hadoop/tmp
+	sudo chmod 750 /fs/hadoop/tmp/
+
+On all nodes
+------------
+
+sudo vi /etc/hosts
+
+	Change:
+		127.0.1.1       hc0000
+	To:
+		192.168.1.10	hc0000
+		192.168.1.11	hc0001
+		192.168.1.12	hc0002
+
+Leave the rest of the file intact.
+
+Reboot each node to make sure these settings update
+
+`sudo reboot`
+
+On the master
+-------------
+
+Format the HDFS
+
+`/usr/local/hadoop/bin/hadoop namenode -format`
+
+Start it up
+
+`/usr/local/hadoop/bin/start-all.sh`
+
+On all nodes
+------------
+
+You can run 'jps' again to make sure all the right processes are up and running.
+
+You should now be able to view the following web pages:
+
+NameNode
+
+	192.168.1.10:50070
+
+JobTracker
+
+	192.168.1.10:50030
+
+TaskTrackers
+
+	192.168.1.10:50060
+	192.168.1.11:50060
+	192.168.1.12:50060
+
+Congratulations on setting up your first Hadoop Environment!
+
+Sources
+-------
+
+This blog post was an invaluable resource in setting up this cluster:
+http://blog.ittoby.com/2013/08/starting-small-set-up-hadoop-compute.html
