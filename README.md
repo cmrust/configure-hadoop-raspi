@@ -6,7 +6,7 @@ Configuring a Hadoop Cluster with Raspberry Pi's
 Welcome!
 --------
 
-To be clear, the following setup is impractical and should be done purely as a learning excercise. The JVM (Java Virtual Machine) which powers Hadoop is horridly slow on the ARM CPUs that drive the Raspberry Pi. Feel free to use a Model A or B Raspberry Pi as neither will be powerful enough to do any real  data crunching. This project exists solely to help in booting up your first Hadoop Environment! 
+To be clear, the following setup is impractical and should be done purely as a learning excercise. The JVM (Java Virtual Machine) which powers Hadoop is horridly slow on the ARM CPUs that drive the Raspberry Pi. Feel free to use any model Raspberry Pi as none of them will be able to do any timely data crunching anyways. This project exists solely to help in booting up your first Hadoop Environment! 
 
 Technically you could draw more power out of the setup with a few of the following considerations, but that's beyond the scope of this guide: Hard Float OS, Oracle JDK, JVM tuning params.
 
