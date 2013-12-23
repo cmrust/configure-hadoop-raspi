@@ -425,5 +425,8 @@ Congratulations on setting up your first Hadoop Environment!
 Sources
 -------
 
+A great resource for understanding Hadoop setups:
+http://bradhedlund.com/2011/09/10/understanding-hadoop-clusters-and-the-network/
+
 This blog post was an invaluable resource in setting up this cluster:
 http://blog.ittoby.com/2013/08/starting-small-set-up-hadoop-compute.html
