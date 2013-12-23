@@ -96,11 +96,11 @@ For the sake of clarity, I'll refrain from pasting the loop at each step but ins
 
 Update the system
 
-`sudo apt-get update; sudo apt-get -y upgrade`
+	sudo apt-get update; sudo apt-get -y upgrade
 	
 Install Java
 
-`sudo apt-get -y install openjdk-7-jdk`
+	sudo apt-get -y install openjdk-7-jdk
 	
 Setup 'hduser' User and 'hadoop' Group
 
@@ -111,7 +111,7 @@ Adding the user may fail when trying to do so over ssh. This is because you can'
 
 Here we'll give `hduser` sudo access. This step must be done as `root` user or someone with sudo access.
 
-`sudo adduser hduser sudo`
+	sudo adduser hduser sudo
 
 *WARNING: Everything from this point forward has to be run as user 'hduser'*
 
@@ -243,11 +243,11 @@ You can run 'jps' command to ensure all the appropriate Java Hadoop processes ar
 
 If you've encountered failures look at the logs:
 
-`/usr/local/hadoop/logs`
+	/usr/local/hadoop/logs
 
 Logs are titled like:
 
-`hadoop-(username)-(processtype)-(machinename).log`
+	hadoop-(username)-(processtype)-(machinename).log
 
 Now that everything is up and running we'll run our first job, a word count example!
 
@@ -261,7 +261,7 @@ Download any book in "Plain Text UTF-8" format from www.gutenburg.org and load i
 
 Run the wordcount example:
 
-`/usr/local/hadoop/bin/hadoop jar /usr/local/hadoop/hadoop*examples*.jar wordcount /fs/hduser/books /fs/hduser/books-output`
+	/usr/local/hadoop/bin/hadoop jar /usr/local/hadoop/hadoop*examples*.jar wordcount /fs/hduser/books /fs/hduser/books-output
 
 Setup the slave nodes
 ---------------------
@@ -287,11 +287,11 @@ Before we begin again, setup passwordless ssh between all nodes:
 
 Gather up all keys with a loop
 
-`cat ~/.ssh/id_rsa.pub`
+	cat ~/.ssh/id_rsa.pub
 
 Take these public keys and add them to the authorized_keys file of each node with a loop
 	
-`echo "" >> ~/.ssh/authorized_keys`
+	echo "" >> ~/.ssh/authorized_keys
 
 
 On the master, hc0000
@@ -380,18 +380,18 @@ Leave the rest of the file intact.
 
 Reboot each node to make sure these settings update
 
-`sudo reboot`
+	sudo reboot
 
 On the master
 -------------
 
 Format the HDFS
 
-`/usr/local/hadoop/bin/hadoop namenode -format`
+	/usr/local/hadoop/bin/hadoop namenode -format
 
 Start it up
 
-`/usr/local/hadoop/bin/start-all.sh`
+	/usr/local/hadoop/bin/start-all.sh
 
 On all nodes
 ------------
